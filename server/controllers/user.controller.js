@@ -1,3 +1,4 @@
+import sendEmail from '../config/sendEmail.js'
 import UserModel from '../models/user.model.js' 
 import bcryptjs, { hash } from 'bcryptjs'
 
@@ -35,6 +36,24 @@ export async function registerUserController(response, request) {
 
         const newUser = new UserModel(payload)
         const save = await newUser.save()
+      
+        const verifyEmailTemplate = '${process.env.FRONTEND_URL}/verify-email?code=${save?._id}'
+
+        const verifyEmail = await sendEmail({
+            sendTo: email,
+            subject: "Verify email from YumRunLK",
+            html: verifyEmailTemplate({
+                name,
+                url : verifyEmailTemplate
+            })
+        })
+
+        return response.json({
+            message: "User registered successfully",
+            error: false,
+            success: true,
+            data: save
+        })
 
     } catch (error) {
         return response.status(500).jason({
