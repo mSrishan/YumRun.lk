@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import helmet, { crossOriginResourcePolicy } from 'helmet';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/connectDB.js';
+import userRouter from './route/user.route.js';
 dotenv.config();
 
 const app = express();
@@ -29,6 +30,8 @@ app.get("/", (request, response) => {
         message: "Server is running."+ PORT
     })
 })
+
+app.use('/api/user', userRouter)
 
 connectDB().then(() => {
     app.listen(PORT, () => {
