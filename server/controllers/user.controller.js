@@ -177,3 +177,34 @@ export async function loginController(request, response) {
         })
      }
 }
+
+export async function logoutController(request, response) {
+    try {
+        const userId = request.userId;
+        const cookiesOption = {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+        };
+
+        // Correct method is clearCookie (singular)
+        response.clearCookie("accessToken", cookiesOption);
+        response.clearCookie("refreshToken", cookiesOption);
+
+        const removeRefreshToken = await UserModel.findByIdAndDelete(userId, {
+             refresh_token : " "
+         })
+        return response.json({
+            message: "Logout Successfully",
+            error: false,
+            success: true,
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false,
+        });
+    }
+}
+
